@@ -1,0 +1,93 @@
+Finance Master converts raw bank CSV exports (such as YearEndAllPaymentMethods) into clean, organized Excel and PDF reports that show how often you shop at each store and how much you spend there over a year.x"""
+finance_master.py
+
+Purpose
+-------
+This project was created to answer a simple but important personal finance
+question:
+
+    “How often do I shop at the same store in a year, and how much do I spend there?”
+
+Most bank reports export transactions as long, unorganized CSV files
+(for example: "YearEndAllPaymentMethods") that are difficult to analyze
+at a glance. This script transforms that raw data into clear, organized,
+and readable reports.
+
+What It Does
+------------
+- Cleans raw bank CSV exports (fixes spacing, removes narration noise)
+- Normalizes transaction descriptions so the real merchant name is used
+- Groups transactions by merchant "family" (e.g. Amazon, Costco Gas, 7-Eleven)
+- Counts how many times each store appears in a year
+- Calculates total spend per store or group
+- Generates human-friendly reports:
+  - Quick summary PDFs
+  - Organized detailed PDFs
+  - Excel files for deeper review
+
+Why It Exists
+-------------
+Banks show transactions one row at a time, but they don’t answer questions like:
+- Which stores do I visit most often?
+- Where does most of my money go over the year?
+- How many repeat purchases do I make at the same merchant?
+
+This script bridges that gap by turning raw transaction exports into
+insight-driven summaries that can be reviewed in seconds.
+
+Designed For
+------------
+- Personal finance review
+- Year-end spending analysis
+- Store/merchant frequency tracking
+- Simple budgeting insights without using third-party apps
+
+Everything runs locally. No data is uploaded anywhere.
+"""
+"""
+finance_master.py
+
+Purpose
+-------
+This project was created to answer a simple but important personal finance
+question:
+
+    “How often do I shop at the same store in a year, and how much do I spend there?”
+
+Most bank reports export transactions as long, unorganized CSV files
+(for example: "YearEndAllPaymentMethods") that are difficult to analyze
+at a glance. This script transforms that raw data into clear, organized,
+and readable reports.
+
+What It Does
+------------
+- Cleans raw bank CSV exports (fixes spacing, removes narration noise)
+- Normalizes transaction descriptions so the real merchant name is used
+- Groups transactions by merchant "family" (e.g. Amazon, Costco Gas, 7-Eleven)
+- Counts how many times each store appears in a year
+- Calculates total spend per store or group
+- Generates human-friendly reports:
+  - Quick summary PDFs
+  - Organized detailed PDFs
+  - Excel files for deeper review
+
+Why It Exists
+-------------
+Banks show transactions one row at a time, but they don’t answer questions like:
+- Which stores do I visit most often?
+- Where does most of my money go over the year?
+- How many repeat purchases do I make at the same merchant?
+
+This script bridges that gap by turning raw transaction exports into
+insight-driven summaries that can be reviewed in seconds.
+
+Designed For
+------------
+- Personal finance review
+- Year-end spending analysis
+- Store/merchant frequency tracking
+- Simple budgeting insights without using third-party apps
+
+Everything runs locally. No data is uploaded anywhere.
+"""
+

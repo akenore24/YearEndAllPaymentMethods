@@ -1,0 +1,80 @@
+
+Folder Setup
+Put these in the same folder:
+finance_master.py
+expenses.csv   (your input)
+Default input name is expenses.csv.
+Run Commands
+1) Fix spacing only (raw cleanup)
+Creates a clean CSV with consistent spacing:
+python3 finance_master.py spacing
+Output:
+expenses_raw_spacing_fixed.csv
+2) Quick summary (print to terminal)
+Shows quick “Group / Txns / Total” list:
+python3 finance_master.py quick --limit 40
+3) Quick summary PDF (easy to read)
+Creates 1-page PDF with a clean table:
+python3 finance_master.py quick_pdf --limit 60
+Sort options:
+python3 finance_master.py quick_pdf --sort total
+python3 finance_master.py quick_pdf --sort txns
+4) Full pipeline (Excel + PDF, default grouping)
+Creates:
+Excel detail grouped
+Excel summary
+PDF detail grouped
+PDF summary
+python3 finance_master.py pipeline
+5) Family summary PDF (sorted by total/txns)
+python3 finance_master.py pdf_families --sort total --zelle-block first
+Options:
+--sort total or --sort txns
+--zelle-block first|last|none
+6) Family summary Excel (sorted by total/txns)
+python3 finance_master.py excel_families --sort txns --zelle-block last
+7) Organized Report PDF (BEST one)
+Creates organized_report.pdf:
+Page 1: Top groups by Total + Top groups by Txns
+Then: detailed grouped pages
+ALL Zelle grouped together into a single group
+python3 finance_master.py organized_pdf
+Customize top sizes:
+python3 finance_master.py organized_pdf --top-total 30 --top-txns 30
+Grouping Logic (How “Families” Work)
+Default grouping (group_key)
+Zelle grouped by person:
+ZELLE - GABE DANIEL
+ZELLE - DJ SALON
+Others grouped by merchant core:
+7-ELEVEN → 7-ELEVEN
+COSTCO GAS #1652 → COSTCO GAS
+AMAZON MKTPL*... → AMAZON
+Organized grouping (group_key_organized)
+ALL Zelle into ONE group:
+ZELLE
+Others grouped the same way:
+AMAZON, COSTCO GAS, 7-ELEVEN, etc.
+Notes / Tips
+If merchants split into multiple similar names
+Example:
+SHEGER INTERNATIONAL MAR
+SHEGER INTERNATIONAL MARK
+You can tighten grouping by editing merchant_core() and adding a rule:
+if d.startswith("SHEGER INTERNATIONAL"):
+    return "SHEGER INTERNATIONAL"
+Security / Privacy
+This tool runs locally on your machine.
+No cloud services, no uploads.
+License
+Use freely for personal finance organization.
+Author / Maintainer
+Built for personal finance organization workflows.
+
+---
+
+If you want, I can also generate:
+- **CONTRIBUTING.md**
+- **CHANGELOG.md**
+- **Example screenshots section**
+- A ready GitHub repo structure (`/data`, `/output`, `/docs`) so it looks professional.
