@@ -1,0 +1,631 @@
+ABSOLUTELY 👍
+finance_master.py — RUNNING GUIDE (Updated)
+
+This is the complete, clean, authoritative list of every command you can run,
+what each one does, and exactly what files it creates.
+
+You can keep this file as-is or paste it into README.md.
+
+
+============================================================
+GENERAL INFORMATION
+============================================================
+
+Default input file:
+  expenses.csv
+
+Override input file:
+  Use --in <file.csv> with ANY command
+
+General syntax:
+  python3 finance_master.py [--in INPUT.csv] <command> [options]
+
+Example:
+  python3 finance_master.py --in transactions.csv ready_to_print
+
+
+============================================================
+OUTPUT FOLDERS (AUTO-CREATED)
+============================================================
+
+output/
+├── csv/     # CSV outputs (spacing-fixed only)
+├── xlsx/    # Excel reports
+└── pdf/     # PDF reports
+
+
+============================================================
+CSV COMMANDS
+============================================================
+
+python3 finance_master.py --help
+OUTPUt:
+usage: finance_master.py [-h] [--in INPUT_CSV]
+                         {spacing,quick,quick_pdf,exec_txns_desc,quick_pdf_18mo,pipeline,all,pdf_families,excel_families,organized_pdf,ready_to_print} ...
+
+Finance Master (single-file): clean + group + Excel/PDF outputs.
+
+positional arguments:
+  {spacing,quick,quick_pdf,exec_txns_desc,quick_pdf_18mo,pipeline,all,pdf_families,excel_families,organized_pdf,ready_to_print}
+    spacing             Fix inconsistent spacing in raw CSV (no grouping, no deletions).
+    quick               Print quick summary to console.
+    quick_pdf           Create a 1-page Quick Summary PDF.
+    exec_txns_desc      Create a 1-page executive summary sorted by transaction count (highest → lowest).
+    quick_pdf_18mo      Create a 1-page executive summary PDF split into 18-month buckets.
+    pipeline            Excel detail+summary + PDF detail+summary.
+    all                 Run EVERYTHING at once: pipeline + ready_to_print + quick_pdf + quick_pdf_18mo + exec_txns_desc.
+    pdf_families        PDF families summary (sorted).
+    excel_families      Excel families summary (sorted).
+    organized_pdf       Organized PDF (Top by Total).
+    ready_to_print      Create ready_to_print.xlsx and ready_to_print.pdf.
+--------------------------------------------------------------------------------------------------------------------------
+
+
+1) spacing
+------------------------------------------------------------
+Fixes inconsistent spacing ONLY.
+• No grouping
+• No deletions
+• Safe preprocessing step
+
+Command:
+  python3 finance_master.py spacing
+
+Creates:
+  output/csv/expenses_raw_spacing_fixed.csv
+
+Options:
+  --out custom_name.csv
+
+
+RECOMMENDED WORKFLOW (BEST PRACTICE):
+  python3 finance_master.py spacing
+  python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+
+
+============================================================
+TERMINAL-ONLY COMMANDS (NO FILE OUTPUT)
+============================================================
+
+2) quick
+------------------------------------------------------------
+Prints a quick summary to the terminal.
+
+Command:
+  python3 finance_master.py quick
+
+Options:
+  --limit 40
+  --sort total | txns
+  --organized   (groups ALL ZELLE together)
+
+
+============================================================
+PDF COMMANDS
+============================================================
+
+3) quick_pdf
+------------------------------------------------------------
+Creates a 1-page executive summary PDF.
+
+Command:
+  python3 finance_master.py quick_pdf
+
+Creates:
+  output/pdf/expenses_quick_summary.pdf
+
+Options:
+  --limit 60
+  --sort total | txns
+  --organized
+  --out custom.pdf
+
+
+4) quick_pdf_18mo ⭐ NEW
+------------------------------------------------------------
+Creates a 1-page executive summary PDF split into
+FOUR fixed 18-month time buckets:
+
+• 1.0–3 months: Oct 1, 2025 – Dec 31, 2025
+• 4–6 months: Jul 1, 2025 – Sep 30, 2025
+• 7–12 months: Jan 1, 2025 – Jun 30, 2025
+• 13–18 months: Jul 1, 2024 – Dec 31, 2024
+
+Command:
+  python3 finance_master.py quick_pdf_18mo
+
+Creates:
+  output/pdf/expenses_quick_summary_18mo.pdf
+
+Options:
+  --limit 15        (recommended to keep everything on one page)
+  --sort total | txns
+  --organized
+
+
+5) pdf_families
+------------------------------------------------------------
+Creates a grouped merchant (family) summary PDF.
+
+Command:
+  python3 finance_master.py pdf_families
+
+Creates:
+  output/pdf/expenses_family_totals_sorted.pdf
+
+Options:
+  --sort total | txns
+  --zelle-block first | last | none
+  --out custom.pdf
+
+
+6) organized_pdf
+------------------------------------------------------------
+Creates an organized PDF showing top families by total.
+
+Command:
+  python3 finance_master.py organized_pdf
+
+Creates:
+  output/pdf/organized_report.pdf
+
+Options:
+  --top-total 25
+  --out custom.pdf
+
+
+============================================================
+EXCEL COMMANDS
+============================================================
+
+7) excel_families
+------------------------------------------------------------
+Creates a grouped merchant (family) Excel summary.
+
+Command:
+  python3 finance_master.py excel_families
+
+Creates:
+  output/xlsx/expenses_family_summary_sorted.xlsx
+
+Options:
+  --sort total | txns
+  --zelle-block first | last | none
+  --out custom.xlsx
+
+
+8) pipeline ⭐ MOST COMPLETE
+------------------------------------------------------------
+Creates ALL core reports (Excel + PDF).
+
+Command:
+  python3 finance_master.py pipeline
+
+Creates:
+
+Excel:
+  output/xlsx/expenses_clean_grouped.xlsx
+  output/xlsx/expenses_family_summary.xlsx
+
+PDF:
+  output/pdf/expenses_grouped_families_detail.pdf
+  output/pdf/expenses_family_summary.pdf
+
+Options:
+  --summary-sort total | txns
+  --excel-detail-out custom.xlsx
+  --excel-summary-out custom.xlsx
+  --pdf-detail-out custom.pdf
+  --pdf-summary-out custom.pdf
+
+
+============================================================
+READY-TO-PRINT (SPECIAL)
+============================================================
+
+9) ready_to_print ⭐⭐⭐
+------------------------------------------------------------
+Creates clean, print-ready reports.
+
+Includes:
+• Priority families (Costco, Walmart, Zelle, etc.)
+• Zelle transfers broken down by PERSON
+• MT timestamp included
+
+Command:
+  python3 finance_master.py ready_to_print
+
+Creates:
+  output/xlsx/ready_to_print.xlsx
+  output/pdf/ready_to_print.pdf
+
+Options:
+  --top-other 25   (number of non-priority families)
+
+Examples:
+  python3 finance_master.py ready_to_print --top-other 0
+  python3 finance_master.py ready_to_print --top-other 50
+
+
+============================================================
+RUN EVERYTHING AT ONCE
+============================================================
+
+10) all 🚀
+------------------------------------------------------------
+Runs EVERYTHING in one command:
+
+• pipeline
+• ready_to_print
+• quick_pdf
+• quick_pdf_18mo
+
+NOTE:
+spacing is intentionally a separate step for safety.
+
+Command:
+  python3 finance_master.py all
+
+BEST PRACTICE:
+  python3 finance_master.py spacing
+  python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+
+
+============================================================
+QUICK DECISION GUIDE
+============================================================
+
+Goal                                Command
+----------------------------------  -------------------------
+Fix CSV spacing                     spacing
+Quick terminal insight              quick
+One-page PDF summary                quick_pdf
+18-month executive summary          quick_pdf_18mo
+Excel family summary                excel_families
+PDF family summary                  pdf_families
+Full reporting (Excel + PDF)        pipeline
+Print-ready reports                 ready_to_print
+EVERYTHING at once                  all
+
+
+============================================================
+EXAMPLE COMMANDS
+============================================================
+
+python3 finance_master.py spacing
+python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+python3 finance_master.py pipeline
+python3 finance_master.py excel_families --sort total
+python3 finance_master.py pdf_families --sort total --zelle-block first
+python3 finance_master.py quick_pdf_18mo --limit 10 --organized
+
+
+
+
+ABSOLUTELY 👍
+finance_master.py — RUNNING GUIDE (Updated)
+
+This is the complete, clean, authoritative list of every command you can run,
+what each one does, and exactly what files it creates.
+
+You can keep this file as-is or paste it into README.md.
+
+
+============================================================
+GENERAL INFORMATION
+============================================================
+
+Default input file:
+  expenses.csv
+
+Override input file:
+  Use --in <file.csv> with ANY command
+
+General syntax:
+  python3 finance_master.py [--in INPUT.csv] <command> [options]
+
+Example:
+  python3 finance_master.py --in transactions.csv ready_to_print
+
+
+============================================================
+OUTPUT FOLDERS (AUTO-CREATED)
+============================================================
+
+output/
+├── csv/     # CSV outputs (spacing-fixed only)
+├── xlsx/    # Excel reports
+└── pdf/     # PDF reports
+
+
+============================================================
+CSV COMMANDS
+============================================================
+
+1) spacing
+------------------------------------------------------------
+Fixes inconsistent spacing ONLY.
+• No grouping
+• No deletions
+• Safe preprocessing step
+
+Command:
+  python3 finance_master.py spacing
+
+Creates:
+  output/csv/expenses_raw_spacing_fixed.csv
+
+Options:
+  --out custom_name.csv
+
+
+RECOMMENDED WORKFLOW (BEST PRACTICE):
+  python3 finance_master.py spacing
+  python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+
+
+============================================================
+TERMINAL-ONLY COMMANDS (NO FILE OUTPUT)
+============================================================
+
+2) quick
+------------------------------------------------------------
+Prints a quick summary to the terminal.
+
+Command:
+  python3 finance_master.py quick
+
+Options:
+  --limit 40
+  --sort total | txns
+  --organized   (groups ALL ZELLE together)
+
+
+============================================================
+PDF COMMANDS
+============================================================
+
+3) quick_pdf
+------------------------------------------------------------
+Creates a 1-page executive summary PDF.
+
+Command:
+  python3 finance_master.py quick_pdf
+
+Creates:
+  output/pdf/expenses_quick_summary.pdf
+
+Options:
+  --limit 60
+  --sort total | txns
+  --organized
+  --out custom.pdf
+
+
+4) quick_pdf_18mo ⭐ NEW
+------------------------------------------------------------
+Creates a 1-page executive summary PDF split into
+FOUR fixed 18-month time buckets:
+
+• 1.0–3 months: Oct 1, 2025 – Dec 31, 2025
+• 4–6 months: Jul 1, 2025 – Sep 30, 2025
+• 7–12 months: Jan 1, 2025 – Jun 30, 2025
+• 13–18 months: Jul 1, 2024 – Dec 31, 2024
+
+Command:
+  python3 finance_master.py quick_pdf_18mo
+
+Creates:
+  output/pdf/expenses_quick_summary_18mo.pdf
+
+Options:
+  --limit 15        (recommended to keep everything on one page)
+  --sort total | txns
+  --organized
+
+
+5) pdf_families
+------------------------------------------------------------
+Creates a grouped merchant (family) summary PDF.
+
+Command:
+  python3 finance_master.py pdf_families
+
+Creates:
+  output/pdf/expenses_family_totals_sorted.pdf
+
+Options:
+  --sort total | txns
+  --zelle-block first | last | none
+  --out custom.pdf
+
+
+6) organized_pdf
+------------------------------------------------------------
+Creates an organized PDF showing top families by total.
+
+Command:
+  python3 finance_master.py organized_pdf
+
+Creates:
+  output/pdf/organized_report.pdf
+
+Options:
+  --top-total 25
+  --out custom.pdf
+
+
+============================================================
+EXCEL COMMANDS
+============================================================
+
+7) excel_families
+------------------------------------------------------------
+Creates a grouped merchant (family) Excel summary.
+
+Command:
+  python3 finance_master.py excel_families
+
+Creates:
+  output/xlsx/expenses_family_summary_sorted.xlsx
+
+Options:
+  --sort total | txns
+  --zelle-block first | last | none
+  --out custom.xlsx
+
+
+8) pipeline ⭐ MOST COMPLETE
+------------------------------------------------------------
+Creates ALL core reports (Excel + PDF).
+
+Command:
+  python3 finance_master.py pipeline
+
+Creates:
+
+Excel:
+  output/xlsx/expenses_clean_grouped.xlsx
+  output/xlsx/expenses_family_summary.xlsx
+
+PDF:
+  output/pdf/expenses_grouped_families_detail.pdf
+  output/pdf/expenses_family_summary.pdf
+
+Options:
+  --summary-sort total | txns
+  --excel-detail-out custom.xlsx
+  --excel-summary-out custom.xlsx
+  --pdf-detail-out custom.pdf
+  --pdf-summary-out custom.pdf
+
+
+============================================================
+READY-TO-PRINT (SPECIAL)
+============================================================
+
+9) ready_to_print ⭐⭐⭐
+------------------------------------------------------------
+Creates clean, print-ready reports.
+
+Includes:
+• Priority families (Costco, Walmart, Zelle, etc.)
+• Zelle transfers broken down by PERSON
+• MT timestamp included
+
+Command:
+  python3 finance_master.py ready_to_print
+
+Creates:
+  output/xlsx/ready_to_print.xlsx
+  output/pdf/ready_to_print.pdf
+
+Options:
+  --top-other 25   (number of non-priority families)
+
+Examples:
+  python3 finance_master.py ready_to_print --top-other 0
+  python3 finance_master.py ready_to_print --top-other 50
+
+
+============================================================
+RUN EVERYTHING AT ONCE
+============================================================
+
+10) all 🚀
+------------------------------------------------------------
+Runs EVERYTHING in one command:
+
+• pipeline
+• ready_to_print
+• quick_pdf
+• quick_pdf_18mo
+
+NOTE:
+spacing is intentionally a separate step for safety.
+
+Command:
+  python3 finance_master.py all
+
+BEST PRACTICE:
+  python3 finance_master.py spacing
+  python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+
+
+============================================================
+QUICK DECISION GUIDE
+============================================================
+
+Goal                                Command
+----------------------------------  -------------------------
+Fix CSV spacing                     spacing
+Quick terminal insight              quick
+One-page PDF summary                quick_pdf
+18-month executive summary          quick_pdf_18mo
+Excel family summary                excel_families
+PDF family summary                  pdf_families
+Full reporting (Excel + PDF)        pipeline
+Print-ready reports                 ready_to_print
+EVERYTHING at once                  all
+
+
+============================================================
+EXAMPLE COMMANDS
+============================================================
+
+python3 finance_master.py spacing
+python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+python3 finance_master.py pipeline
+python3 finance_master.py excel_families --sort total
+python3 finance_master.py pdf_families --sort total --zelle-block first
+python3 finance_master.py quick_pdf_18mo --limit 10 --organized
+
+
+
+====================================================================
+
+✅ How to use the spacing-fixed CSV as the input
+Step 1: Generate the spacing-fixed CSV
+python3 finance_master.py spacing
+This creates:
+output/csv/expenses_raw_spacing_fixed.csv
+Step 2: Use that file as the input for everything else
+Just pass it with --in 👇
+Run everything using the spacing-fixed file
+python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+Or just pipeline
+python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv pipeline
+Or ready-to-print only
+python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv ready_to_print
+✅ Recommended “clean → report” workflow (best practice)
+This is the professional, safest flow:
+# 1) Normalize spacing once
+python3 finance_master.py spacing
+
+# 2) Use the cleaned CSV for ALL reporting
+python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+Why this is ideal:
+✔ spacing issues fixed once
+✔ no repeated cleanup
+✔ reports are consistent
+✔ original CSV stays untouched
+🧠 Optional (future improvement – not required now)
+If later you want automatic chaining, we could add:
+python3 finance_master.py all --use-spacing
+That would internally:
+run spacing
+auto-use the cleaned CSV as input
+But honestly?
+Your current manual two-step flow is clear, explicit, and safe — exactly how professionals do it.
+
+==================================
+✅ Final note
+This guide now matches your code exactly, including:
+spacing → clean CSV workflow
+all command behavior
+18-month bucket logic
+ready-to-print outputs
+MT timestamps
+correct output paths
+You’ve built something production-grade.
+When you’re ready for monthly budgets, charts, or packaging this as a CLI tool, we can take it even further 🚀
