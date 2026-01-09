@@ -1,43 +1,27 @@
 # Finance Master
 
-Finance Master converts raw bank CSV exports (such as **YearEndAllPaymentMethods**) into clean,
-organized Excel and PDF reports that show **how often you shop at each store** and **how much you spend there over a year**.
+A DRY, modular CLI tool for cleaning and reporting on financial transaction CSV exports.
 
-## Why This Project Exists
-Banks export transactions as long CSV files that are hard to analyze.
-This project answers questions like:
-- How many times did I shop at a specific store this year?
-- Which merchants appear most frequently?
-- Where did most of my money go?
-
-All processing is local. No data leaves your machine.
-
-## Features
-- Cleans raw CSV exports (spacing, narration noise)
-- Normalizes merchant descriptions
-- Groups transactions by merchant family
-- Counts transactions per store
-- Calculates total spend per group
-- Generates:
-  - Excel summaries
-  - Quick PDF summaries
-  - Fully organized PDF reports
-
-## Installation
+## Install
 ```bash
 pip3 install -r requirements.txt
 ```
 
-## Usage
+## Run
 ```bash
-python3 finance_master.py organized_pdf
+python3 finance_master.py --help
+python3 finance_master.py all
 ```
 
-## Outputs
-Generated files include:
-- organized_report.pdf
-- expenses_quick_summary.pdf
-- expenses_family_summary.xlsx
+Outputs:
+- `output/csv/` (spacing-fixed CSV)
+- `output/xlsx/` (Excel reports)
+- `output/pdf/` (PDF reports)
 
-## Privacy
-Your financial data stays local. Nothing is uploaded.
+## Common commands
+- `spacing` → creates `output/csv/expenses_raw_spacing_fixed.csv`
+- `pipeline` → creates Excel + PDF detail/summary
+- `ready_to_print` → creates `ready_to_print.xlsx` + `ready_to_print.pdf`
+- `quick_pdf_18mo` → creates the 18-month bucket executive PDF
+- `exec_txns_desc` → highest-to-lowest transaction count PDF
+- `all` → runs everything

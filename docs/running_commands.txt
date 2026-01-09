@@ -1,0 +1,7 @@
+python3 finance_master.py list
+python3 finance_master.py doctor
+python3 finance_master.py quick
+python3 finance_master.py quick_pdf
+python3 finance_master.py excel_families
+python3 finance_master.py pdf_families
+python3 finance_master.py organized

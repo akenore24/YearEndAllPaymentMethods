@@ -1,0 +1,16 @@
+# Finance Master — Quick Commands
+
+```bash
+python3 finance_master.py --help
+python3 finance_master.py spacing
+python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+
+# Individual reports
+python3 finance_master.py pipeline
+python3 finance_master.py excel_families --sort total
+python3 finance_master.py pdf_families --sort total --zelle-block first
+python3 finance_master.py quick_pdf --sort total
+python3 finance_master.py exec_txns_desc --limit 20
+python3 finance_master.py quick_pdf_18mo --limit 10 --organized
+python3 finance_master.py ready_to_print --top-other 25
+```
