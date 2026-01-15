@@ -83,7 +83,7 @@ def run_quick(in_path: Path, limit: int, sort_mode: str, organized: bool):
     summary = build_summary(cleaned, key_fn=key_fn)
     items = sort_summary_items(summary, sort_mode=sort_mode)[:max(0, int(limit))]
     print(mt_timestamp_line("Generated (MT)"))
-    print("✅ Quick Summary:")
+    print("✅ The 18 Months Quick Summary:")
     for name, info in items:
         print(f"  - {name}: {info['txns']} txns, {fmt_money(info['total'])}")
 
@@ -153,7 +153,7 @@ def run_pipeline(in_path: Path,
     write_excel_summary_items(items, excel_summary_path, title="Family Summary")
 
     write_pdf_detail(detail_rows, pdf_detail_path, key_fn=group_key)
-    write_pdf_summary(items, pdf_summary_path, title="Expense Summary")
+    write_pdf_summary(items, pdf_summary_path, title="The 18 months Expense Summary")
 
     print(mt_timestamp_line("Generated (MT)"))
     print("✅ Pipeline complete:")
@@ -244,6 +244,9 @@ def run_all(in_path: Path):
 
     print("✅ ALL reports completed.")
     print("📂 Outputs created under output/ (csv/xlsx/pdf).")
+    
+    # Jan 13, 2026
+    
 
 
 # -----------------------------
