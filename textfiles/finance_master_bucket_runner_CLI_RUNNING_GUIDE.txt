@@ -1,0 +1,210 @@
+
+FINANCE_MASTER_BUCKET_RUNNER — CLI RUNNING GUIDE & README
+=========================================================
+
+Author intent:
+This tool was built to eliminate running TWO separate CSVs (12-month + 18-month)
+by using ONE 18-month CSV as the source of truth.
+
+It will:
+• Derive the last 12 months FROM your 18-month CSV (auto-slice)
+• Run finance_master.py commands on BOTH buckets (12m and 18m)
+• Tag/rename generated outputs so you instantly know which bucket they came from
+• Prevent confusing filename duplication (smart rename)
+
+This file explains WHAT the tool does, WHY it exists, and HOW to run it correctly.
+
+------------------------------------------------
+1. WHAT THIS TOOL DOES (IN SIMPLE TERMS)
+------------------------------------------------
+
+finance_master_bucket_runner.py takes ONE input CSV (18 months) and:
+
+1) Creates a 12-month slice CSV automatically
+   - It reads your 18-month CSV
+   - Finds the latest transaction date
+   - Keeps rows within the last ~12 months (rolling window)
+   - Writes the slice to:
+       _bucket_tmp/last12m.csv
+
+2) Runs finance_master.py commands for BOTH buckets:
+   - Bucket A: 12m (from last12m.csv)
+   - Bucket B: 18m (your original CSV)
+
+3) Renames newly-created output files to match the bucket:
+   - Adds a prefix:
+       12m_
+       18m_
+
+   Example outputs:
+     12m_ready_to_print_ready_to_print.pdf
+     18m_ready_to_print_ready_to_print.pdf
+
+   ✅ Smart rename behavior:
+   If finance_master.py already outputs filenames starting with the command,
+   the runner will NOT repeat the command twice.
+   (Fixes: quick_pdf_quick_pdf_*.pdf duplication)
+
+------------------------------------------------
+2. WHY THIS TOOL EXISTS
+------------------------------------------------
+
+Before:
+• You ran two different CSV files manually (12m + 18m)
+• You had to rename files and keep track yourself
+• Outputs were easy to mix up
+
+Now:
+• One 18-month CSV contains everything
+• The runner derives 12 months automatically
+• Outputs are labeled consistently
+
+This turns your workflow into a repeatable pipeline.
+
+------------------------------------------------
+3. INPUTS & OUTPUTS
+------------------------------------------------
+
+INPUT:
+• One 18-month CSV export (must include a Date column)
+
+TEMP OUTPUT (created automatically):
+• _bucket_tmp/last12m.csv
+
+FINANCE_MASTER OUTPUTS:
+• Whatever finance_master.py normally creates inside your output folder
+  (PDFs, Excel files, etc.)
+
+TAGGED OUTPUTS (renamed by this tool):
+• 12m_<filename>
+• 18m_<filename>
+
+These appear in your output directory (default: output/).
+
+------------------------------------------------
+4. BASIC USAGE
+------------------------------------------------
+
+Run with your 18-month CSV:
+
+  python3 finance_master_bucket_runner.py 18_months.csv
+
+This will:
+• Create _bucket_tmp/last12m.csv
+• Run all configured commands on 12m and 18m
+• Tag all new outputs with 12m_ and 18m_
+
+------------------------------------------------
+5. DRY RUN MODE (SAFE TEST)
+------------------------------------------------
+
+Dry run prints what would happen but does NOT execute finance_master.py:
+
+  python3 finance_master_bucket_runner.py 18_months.csv --dry-run
+
+  python3 finance_master_bucket_runner.py expenses.csv --dry-run
+
+Use this to confirm:
+• The file paths
+• The commands that will run
+• Your finance_master.py path is correct
+
+------------------------------------------------
+6. OPTIONAL FLAGS
+------------------------------------------------
+
+--finance-master
+  Use if finance_master.py is not in the current folder.
+
+  python3 finance_master_bucket_runner.py 18_months.csv \
+    --finance-master /path/to/finance_master.py
+
+--outdir
+  Use if finance_master.py writes outputs somewhere other than ./output
+
+  python3 finance_master_bucket_runner.py 18_months.csv --outdir /path/to/output
+
+--dry-run
+  Do not execute anything; print planned actions.
+
+------------------------------------------------
+7. COMMANDS THIS TOOL RUNS
+------------------------------------------------
+
+By default, it runs these finance_master.py commands (in order):
+
+  quick_pdf
+  exec_txns_desc
+  quick_pdf_18mo
+  pipeline
+  pdf_families
+  excel_families
+  organized_pdf
+  ready_to_print
+  all
+
+You can edit the COMMANDS list inside the script if you want fewer.
+
+------------------------------------------------
+8. DATE SLICING DETAILS (12-MONTH BUCKET)
+------------------------------------------------
+
+• The script detects the MAX (latest) date in your CSV
+• It keeps rows within the last ~12 months (rolling)
+
+Note:
+• This uses an approximate rolling-month calculation (~30.44 days/month).
+• If you want exact calendar month slicing (e.g., Jan 1 to Dec 31),
+  tell me and I’ll upgrade it to use exact calendar math.
+
+------------------------------------------------
+9. WHERE TO FIND RESULTS
+------------------------------------------------
+
+After running:
+
+• Tagged outputs:
+  output/
+    12m_*.pdf
+    12m_*.xlsx
+    18m_*.pdf
+    18m_*.xlsx
+
+• Temporary slice CSV:
+  _bucket_tmp/last12m.csv
+
+------------------------------------------------
+10. TROUBLESHOOTING
+------------------------------------------------
+
+Problem: “Could not find a date column”
+Fix:
+• Your CSV date header is different.
+• Update DATE_CANDIDATES in the script to match your header.
+
+Problem: Runner says finance_master.py failed
+Fix:
+• Confirm finance_master.py runs by itself:
+    python3 finance_master.py quick_pdf 18_months.csv
+• If your finance_master CLI signature is different, tell me your exact command.
+
+Problem: Outputs not renamed
+Fix:
+• Confirm finance_master outputs are written into the same folder you passed as --outdir
+• Ensure you have permission to rename files in that directory.
+
+------------------------------------------------
+11. RECOMMENDED WORKFLOW
+------------------------------------------------
+
+1) Clean your raw export (optional but recommended):
+   python3 wf_transfer_cleaner.py raw.csv
+
+2) Run bucket runner using your 18-month CSV (or clean.csv if that's your main source):
+   python3 finance_master_bucket_runner.py 18_months.csv
+
+3) Review results in output/ with clear 12m_ and 18m_ tags
+
+------------------------------------------------
+END OF FILE
+------------------------------------------------

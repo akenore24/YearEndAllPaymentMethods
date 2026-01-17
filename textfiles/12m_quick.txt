@@ -1,0 +1,51 @@
+The 18 Months Quick Summary:
+  - COSTCO WHSE: 41 txns, $5,942.19
+  - COSTCO GAS: 29 txns, $769.87
+  - SHEGER MARKET: 26 txns, $906.04
+  - ONLINE TRANSFER: 25 txns, $26,681.39
+  - PIASSA ETHIO: 20 txns, $1,680.62
+  - SPROUTS: 20 txns, $1,497.69
+  - WALMART: 15 txns, $1,912.42
+  - ATM WITHDRAWAL: 14 txns, $4,520.00
+  - COMCAST/XFINITY: 14 txns, $572.61
+  - KING SOOPERS: 13 txns, $503.98
+  - ETHIOPIAN EVANGE: 12 txns, $3,650.00
+  - RAZA GLOBAL: 12 txns, $130.00
+  - ZELLE - ABAGEZ DANIEL: 12 txns, $17,026.97
+  - STUDENT LOAN: 7 txns, $1,331.05
+  - CHIPOTLE: 6 txns, $161.39
+  - CITY OF: 6 txns, $715.87
+  - XCEL ENERGY-PSCO: 6 txns, $649.86
+  - ZELLE - MIRKANO DAWIT: 6 txns, $2,805.00
+  - 7-ELEVEN: 5 txns, $29.92
+  - AMAZON: 5 txns, $511.17
+  - EUNIFYPAY: 5 txns, $465.00
+  - PENNYMAC: 5 txns, $19,444.66
+  - RAMAD PAY: 5 txns, $1,720.00
+  - THE HOME: 5 txns, $464.80
+  - VZWRLSS PRPAY: 5 txns, $471.79
+  - APPLE.COM/BILL: 4 txns, $97.68
+  - COBBLESTONE 90: 4 txns, $61.00
+  - DOMINO'S PIZZA: 4 txns, $168.02
+  - HARAR MARKET: 4 txns, $394.63
+  - PRIMELENDING: 4 txns, $8,469.90
+  - ROSS STORE: 4 txns, $564.06
+  - STATE FARM: 4 txns, $1,985.55
+  - WIRE TRANS: 4 txns, $115.00
+  - WT FED: 4 txns, $60,048.13
+  - AFW-AURORA 303-3688555: 3 txns, $6,348.77
+  - KOHL'S AURORA: 3 txns, $412.87
+  - MEGENAGNA GROCERY: 3 txns, $404.29
+  - ZELLE - ABE GETACHEW: 3 txns, $1,950.00
+  - ZELLE - DARILO HABTAMU: 3 txns, $3,560.00
+  - ZELLE - TESFAYE DJ SALON: 3 txns, $165.00
+  - ADVANCE AUTO: 2 txns, $60.54
+  - ALL IN: 2 txns, $19.98
+  - APPLEBEES: 2 txns, $161.27
+  - BEST BUY: 2 txns, $0.00
+  - CASH BACK: 2 txns, $-95.97
+  - CHICK-FIL-A AURORA: 2 txns, $89.89
+  - CO MOTOR: 2 txns, $70.84
+  - DH EPIC: 2 txns, $235.43
+  - LYFT: 2 txns, $44.17
+  - MY DEALS: 2 txns, $-8.05
