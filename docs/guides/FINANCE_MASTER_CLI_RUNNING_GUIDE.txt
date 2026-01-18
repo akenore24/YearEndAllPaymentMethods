@@ -1,0 +1,224 @@
+FINANCE MASTER — CLI RUNNING GUIDE
+
+Finance Master is a production-ready Python CLI tool that cleans, normalizes,
+groups, and reports financial transactions from CSV files into professional
+Excel and PDF outputs.
+
+============================================================
+OVERVIEW
+============================================================
+Key Features:
+- Fixes inconsistent spacing in raw bank CSV exports
+- Cleans and normalizes merchant names (Costco, Walmart, Zelle, WT FED, etc.)
+- Groups merchants into families
+- Optional Zelle grouping (all together or by person where supported)
+- Generates executive summaries and full Excel/PDF reports
+- Mountain Time timestamps on outputs
+- One-command full execution option
+
+============================================================
+INSTALLATION
+============================================================
+Requirements:
+- Python 3.9+
+- pip
+
+Install dependencies:
+pip3 install -r requirements.txt
+
+============================================================
+GENERAL USAGE
+============================================================
+Default input file:
+expenses.csv
+
+Override input file:
+Use --in <file.csv> with ANY command
+
+Syntax:
+python3 finance_master.py [--in INPUT.csv] <command> [options]
+
+Example:
+python3 finance_master.py --in transactions.csv ready_to_print
+
+============================================================
+OUTPUT STRUCTURE (AUTO-CREATED)
+============================================================
+output/
+├── csv/     # CSV outputs (spacing-fixed only)
+├── xlsx/    # Excel reports
+└── pdf/     # PDF reports
+
+============================================================
+CSV PREPROCESSING
+============================================================
+spacing
+Fixes inconsistent spacing ONLY
+- No grouping
+- No deletions
+
+Command:
+python3 finance_master.py spacing
+
+Creates:
+output/csv/expenses_raw_spacing_fixed.csv
+
+Options:
+--out custom_name.csv
+
+============================================================
+TERMINAL COMMANDS
+============================================================
+To Choose from the Commands run
+python3 finance_master.py --help
+    spacing             Fix inconsistent spacing in raw CSV (no grouping, no
+                        deletions).
+    quick               Print quick summary to console.
+    quick_pdf           Create a 1-page Quick Summary PDF.
+    exec_txns_desc      Executive summary sorted by transaction count (high →
+                        low).
+    quick_pdf_18mo      Executive summary PDF split into 18-month buckets.
+    pipeline            Excel detail+summary + PDF detail+summary.
+    pdf_families        PDF families summary (sorted).
+    excel_families      Excel families summary (sorted).
+    organized_pdf       Organized PDF (Top by Total).
+    ready_to_print      Create ready_to_print.xlsx and ready_to_print.pdf.
+    all                 Run EVERYTHING: pipeline + ready_to_print + quick
+                        PDFs.
+
+============================================================
+quick
+Prints a quick summary to the terminal
+
+Command:
+python3 finance_master.py quick
+
+Options:
+--limit 40
+--sort total | txns
+--organized
+
+finance_master.py ready_to_print
+finance_master.py pipeline
+inance_master.py quick_pdf
+python3 finance_master.py organized --sort total
+python3 finance_master.py excel_families\n
+python3 finance_master.py list
+python3 finance_master.py doctor
+
+python3 finance_master.py organized
+
+============================================================
+PDF COMMANDS
+============================================================
+quick_pdf
+Creates a 1-page executive summary PDF
+
+Command:
+python3 finance_master.py quick_pdf
+
+Creates:
+output/pdf/expenses_quick_summary.pdf
+
+------------------------------------------------------------
+quick_pdf_18mo
+Creates a 1-page executive summary split into 18-month buckets
+
+Command:
+python3 finance_master.py quick_pdf_18mo
+
+Creates:
+output/pdf/expenses_quick_summary_18mo.pdf
+
+------------------------------------------------------------
+exec_txns_desc
+Creates an executive summary sorted by transaction count
+
+Command:
+python3 finance_master.py exec_txns_desc
+
+Creates:
+output/pdf/exec_txns_desc.pdf
+
+------------------------------------------------------------
+pdf_families
+Creates a family-grouped PDF summary
+
+Command:
+python3 finance_master.py pdf_families
+
+Creates:
+output/pdf/expenses_family_totals_sorted.pdf
+
+------------------------------------------------------------
+organized_pdf
+Creates an organized PDF (top families by total)
+
+Command:
+python3 finance_master.py organized_pdf
+
+Creates:
+output/pdf/organized_report.pdf
+
+============================================================
+EXCEL COMMANDS
+============================================================
+excel_families
+Creates a family summary Excel file
+
+Command:
+python3 finance_master.py excel_families
+
+Creates:
+output/xlsx/expenses_family_summary_sorted.xlsx
+
+============================================================
+PIPELINES
+============================================================
+pipeline
+Creates full Excel + PDF reports
+
+Command:
+python3 finance_master.py pipeline
+
+Excel:
+output/xlsx/expenses_clean_grouped.xlsx
+output/xlsx/expenses_family_summary.xlsx
+
+PDF:
+output/pdf/expenses_grouped_families_detail.pdf
+output/pdf/expenses_family_summary.pdf
+
+------------------------------------------------------------
+ready_to_print
+Creates print-ready Excel and PDF reports
+
+Command:
+python3 finance_master.py ready_to_print
+
+Creates:
+output/xlsx/ready_to_print.xlsx
+output/pdf/ready_to_print.pdf
+
+------------------------------------------------------------
+all
+Runs ALL reports at once
+
+Command:
+python3 finance_master.py all
+
+============================================================
+BEST PRACTICE WORKFLOW
+============================================================
+1) Normalize spacing once:
+python3 finance_master.py spacing
+
+2) Use cleaned CSV for all reports:
+python3 finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+
+============================================================
+STATUS
+============================================================
+Stable
+Production-ready
+GitHub-ready

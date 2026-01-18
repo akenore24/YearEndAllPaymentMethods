@@ -1,0 +1,490 @@
+# CLI_REFERENCE.txt
+# Version: v1.1
+# Purpose: Single source of truth for all finance-related CLI commands
+# Owner: Abinet Kenore
+# Base Path: /Users/abiken/Desktop/finance_sorter/Realfiles
+# Last Updated: 2026-01-17
+
+cd /Users/abiken/Desktop/finance_sorter/Realfiles
+
+=========================================================
+A) WF_TRANSFER_CLEANER — COMMANDS
+Script: wf_transfer_cleaner.py
+Purpose: Clean Wells Fargo exports (spacing, transfers, payments)
+=========================================================
+
+# Help / Reference
+python3 wf_transfer_cleaner.py --help
+
+# Dry run (analysis only — no files written)
+python3 wf_transfer_cleaner.py expenses.csv --dry-run
+
+# Standard cleaning (default outputs)
+python3 wf_transfer_cleaner.py expenses.csv
+
+# Generate summary PDF
+python3 wf_transfer_cleaner.py expenses.csv --summary-pdf wf_transfer_summary.pdf
+
+# Disable spacing baseline file
+python3 wf_transfer_cleaner.py expenses.csv --no-out-spacing
+
+# Skip name-based transfer filtering
+python3 wf_transfer_cleaner.py expenses.csv --no-name-filter
+
+# Custom output filenames (recommended)
+python3 wf_transfer_cleaner.py expenses.csv   --out-clean clean.csv   --out-report transfers_report.csv   --out-spacing clean_spacing.csv   --summary-pdf wf_transfer_summary.pdf
+
+=========================================================
+B) GRAND_FINANCE_MASTER — CORE COMMANDS
+Script: grand_finance_master.py
+Purpose: finance_master + wf_transfer_cleaner (one CLI)
+=========================================================
+
+# Help / Reference
+python3 grand_finance_master.py --help
+python3 grand_finance_master.py ready_to_print --help
+python3 grand_finance_master.py compare_quick_pdf --help
+python3 grand_finance_master.py wf_clean --help
+python3 grand_finance_master.py wf_to_all --help
+
+# Core finance commands
+python3 grand_finance_master.py spacing
+python3 grand_finance_master.py quick
+python3 grand_finance_master.py quick_pdf
+python3 grand_finance_master.py exec_txns_desc
+python3 grand_finance_master.py quick_pdf_18mo
+python3 grand_finance_master.py pipeline
+python3 grand_finance_master.py pdf_families
+python3 grand_finance_master.py excel_families
+python3 grand_finance_master.py organized_pdf
+python3 grand_finance_master.py ready_to_print
+python3 grand_finance_master.py all
+python3 grand_finance_master.py compare_quick_pdf --help
+
+# Common variants
+python3 grand_finance_master.py quick --limit 40
+python3 grand_finance_master.py quick --limit 40 --sort total
+python3 grand_finance_master.py quick --organized --sort total --limit 80
+python3 grand_finance_master.py quick_pdf --limit 60 --sort total
+python3 grand_finance_master.py quick_pdf --organized --sort total --limit 60
+python3 grand_finance_master.py exec_txns_desc --limit 25
+python3 grand_finance_master.py exec_txns_desc --organized --limit 30
+python3 grand_finance_master.py quick_pdf_18mo --sort total --limit 15
+python3 grand_finance_master.py quick_pdf_18mo --sort txns --limit 20
+python3 grand_finance_master.py quick_pdf_18mo --organized --sort total --limit 15
+
+# Explicit input file (global --in)
+python3 grand_finance_master.py --in expenses.csv spacing
+python3 grand_finance_master.py --in expenses.csv quick
+python3 grand_finance_master.py --in expenses.csv quick --limit 30 --sort total
+python3 grand_finance_master.py --in expenses.csv quick --organized
+python3 grand_finance_master.py --in expenses.csv quick_pdf
+python3 grand_finance_master.py --in expenses.csv quick_pdf --organized
+python3 grand_finance_master.py --in expenses.csv quick_pdf_18mo
+python3 grand_finance_master.py --in expenses.csv quick_pdf_18mo --organized
+python3 grand_finance_master.py --in expenses.csv pipeline
+python3 grand_finance_master.py --in expenses.csv pdf_families
+python3 grand_finance_master.py --in expenses.csv pdf_families --sort txns --zelle-block last
+python3 grand_finance_master.py --in clean.csv all
+
+# Manual pipeline chaining (Linux style)
+python3 grand_finance_master.py spacing && python3 grand_finance_master.py quick --limit 40 && python3 grand_finance_master.py quick_pdf --limit 60 --sort total && python3 grand_finance_master.py ready_to_print
+
+=========================================================
+C) GRAND_FINANCE_MASTER — WF CLEAN (BANK EXPORT CLEANUP)
+=========================================================
+
+# Standard run (writes files)
+python3 grand_finance_master.py wf_clean wf_export.csv
+
+# Dry run (no files written)
+python3 grand_finance_master.py wf_clean wf_export.csv --dry-run
+
+# Create summary PDF
+python3 grand_finance_master.py wf_clean wf_export.csv --summary-pdf wf_transfer_summary.pdf
+
+# Dry-run + PDF summary (no CSVs written)
+python3 grand_finance_master.py wf_clean wf_export.csv --dry-run --summary-pdf wf_transfer_summary.pdf
+
+# Skip spacing baseline file
+python3 grand_finance_master.py wf_clean wf_export.csv --no-out-spacing
+python3 grand_finance_master.py wf_clean wf_export.csv --no-out-spacing --summary-pdf wf_transfer_summary.pdf
+
+# Disable name filter (Way2Save does NOT require KENORE)
+python3 grand_finance_master.py wf_clean wf_export.csv --no-name-filter
+python3 grand_finance_master.py wf_clean wf_export.csv --no-name-filter --summary-pdf wf_transfer_summary.pdf
+
+# Custom output filenames
+python3 grand_finance_master.py wf_clean wf_export.csv --out-clean clean_wf.csv
+python3 grand_finance_master.py wf_clean wf_export.csv --out-report removed_transfers.csv
+python3 grand_finance_master.py wf_clean wf_export.csv --out-spacing wf_spacing.csv
+
+# Combine custom outputs
+python3 grand_finance_master.py wf_clean wf_export.csv   --out-clean clean_wf.csv   --out-report removed_transfers.csv   --out-spacing wf_spacing.csv
+
+=========================================================
+D) GRAND_FINANCE_MASTER — WF_TO_ALL (WF → CLEAN → ALL REPORTS)
+=========================================================
+
+# Auto-find latest WF export → clean → finance ALL
+python3 grand_finance_master.py wf_to_all --latest
+
+# Safe test run (no files written)
+python3 grand_finance_master.py wf_to_all --latest --dry-run
+
+# Full professional run (recommended)
+python3 grand_finance_master.py wf_to_all --latest   --summary-pdf wf_transfer_summary.pdf   --open   --open-xlsx
+
+# Explicit CSV + outdir + auto-open
+python3 grand_finance_master.py wf_to_all expenses.csv   --outdir output/csv   --summary-pdf wf_transfer_summary.pdf   --open   --open-xlsx
+
+# WF pipeline with explicit file and custom outputs
+python3 grand_finance_master.py wf_to_all wf_export.csv   --outdir output   --out-clean clean.csv   --out-report transfers_report.csv   --out-spacing clean_spacing.csv   --summary-pdf wf_transfer_summary.pdf
+
+# Advanced WF discovery controls
+python3 grand_finance_master.py wf_to_all --latest --latest-depth 3
+python3 grand_finance_master.py wf_to_all --latest --latest-pattern "*.csv"
+python3 grand_finance_master.py wf_to_all --latest --latest-dirs ~/Downloads ~/Desktop
+
+=========================================================
+E) FINANCE_MASTER — READY TO GO COMMANDS
+Script: finance_master.py
+Purpose: CSV -> Excel/PDF reports (standalone)
+=========================================================
+
+# Help / Reference
+python3 finance_master.py --help
+python3 finance_master.py list
+python3 finance_master.py doctor
+python3 finance_master.py quick --help
+python3 finance_master.py pipeline --help
+python3 finance_master.py compare_quick_pdf --help
+
+----------------------------------------------------
+E1) FIX SPACING (RAW CSV → CLEAN SPACING)
+----------------------------------------------------
+python3 finance_master.py spacing
+python3 finance_master.py --in expenses.csv spacing
+python3 finance_master.py spacing --out expenses_raw_spacing_fixed.csv
+python3 finance_master.py --in output/csv/expenses_raw.csv spacing
+
+----------------------------------------------------
+E2) QUICK SUMMARY (PRINT TO TERMINAL)
+----------------------------------------------------
+python3 finance_master.py quick
+python3 finance_master.py --in expenses.csv quick
+python3 finance_master.py quick --limit 50
+python3 finance_master.py quick --sort txns
+python3 finance_master.py quick --sort total
+python3 finance_master.py quick --organized
+python3 finance_master.py quick --organized --sort total --limit 80
+
+----------------------------------------------------
+E3) QUICK SUMMARY PDF (1 PAGE)
+----------------------------------------------------
+python3 finance_master.py quick_pdf
+python3 finance_master.py --in expenses.csv quick_pdf
+python3 finance_master.py quick_pdf --out expenses_quick_summary.pdf
+python3 finance_master.py quick_pdf --sort total --limit 60
+python3 finance_master.py quick_pdf --organized --sort total --limit 60
+
+----------------------------------------------------
+E4) EXECUTIVE SUMMARY (HIGHEST → LOWEST TXNS)
+----------------------------------------------------
+python3 finance_master.py exec_txns_desc
+python3 finance_master.py --in expenses.csv exec_txns_desc
+python3 finance_master.py exec_txns_desc --limit 25
+python3 finance_master.py exec_txns_desc --organized --limit 30
+python3 finance_master.py exec_txns_desc --out executive_high_to_low_txns.pdf
+
+----------------------------------------------------
+E5) 18-MONTH BUCKETED EXECUTIVE PDF
+----------------------------------------------------
+python3 finance_master.py quick_pdf_18mo
+python3 finance_master.py --in expenses.csv quick_pdf_18mo
+python3 finance_master.py quick_pdf_18mo --sort total --limit 15
+python3 finance_master.py quick_pdf_18mo --sort txns --limit 20
+python3 finance_master.py quick_pdf_18mo --organized --sort total --limit 15
+
+----------------------------------------------------
+E6) PIPELINE (EXCEL + PDF DETAIL & SUMMARY)
+----------------------------------------------------
+python3 finance_master.py pipeline
+python3 finance_master.py --in expenses.csv pipeline
+python3 finance_master.py pipeline --summary-sort txns
+python3 finance_master.py pipeline --summary-sort total
+python3 finance_master.py pipeline --excel-detail-out detail.xlsx
+python3 finance_master.py pipeline --excel-summary-out summary.xlsx
+python3 finance_master.py pipeline --pdf-detail-out detail.pdf
+python3 finance_master.py pipeline --pdf-summary-out summary.pdf
+
+----------------------------------------------------
+E7) FAMILIES SUMMARY PDF
+----------------------------------------------------
+python3 finance_master.py pdf_families
+python3 finance_master.py --in expenses.csv pdf_families
+python3 finance_master.py pdf_families --sort total
+python3 finance_master.py pdf_families --sort txns
+python3 finance_master.py pdf_families --zelle-block first
+python3 finance_master.py pdf_families --zelle-block last
+python3 finance_master.py pdf_families --zelle-block none
+
+----------------------------------------------------
+E8) FAMILIES SUMMARY EXCEL
+----------------------------------------------------
+python3 finance_master.py excel_families
+python3 finance_master.py --in expenses.csv excel_families
+python3 finance_master.py excel_families --sort total
+python3 finance_master.py excel_families --sort txns
+python3 finance_master.py excel_families --zelle-block first
+python3 finance_master.py excel_families --zelle-block last
+python3 finance_master.py excel_families --zelle-block none
+
+----------------------------------------------------
+E9) ORGANIZED PDF (TOP BY TOTAL)
+----------------------------------------------------
+python3 finance_master.py organized_pdf
+python3 finance_master.py --in expenses.csv organized_pdf
+python3 finance_master.py organized_pdf --top-total 25
+python3 finance_master.py organized_pdf --top-total 40
+python3 finance_master.py organized_pdf --out organized_report.pdf
+
+----------------------------------------------------
+E10) READY-TO-PRINT (EXCEL + PDF)
+----------------------------------------------------
+python3 finance_master.py ready_to_print
+python3 finance_master.py --in expenses.csv ready_to_print
+python3 finance_master.py ready_to_print --top-other 25
+python3 finance_master.py ready_to_print --top-other 40
+python3 finance_master.py ready_to_print --top-other 0
+
+----------------------------------------------------
+E11) RUN EVERYTHING (FULL PIPELINE)
+----------------------------------------------------
+python3 finance_master.py all
+python3 finance_master.py --in expenses.csv all
+python3 finance_master.py --in output/csv/clean.csv all
+
+----------------------------------------------------
+E12) COMPARE TWO CSVs (12m vs 18m) → ONE PDF
+----------------------------------------------------
+python3 finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv
+
+python3 finance_master.py compare_quick_pdf   --in12 expenses12m.csv   --in18 expenses18m.csv   --out expenses_quick_summary_comparison.pdf
+
+python3 finance_master.py compare_quick_pdf   --in12 expenses12m.csv   --in18 expenses18m.csv   --organized
+
+python3 finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort delta_abs
+python3 finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort delta
+python3 finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort total12
+python3 finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort total18
+python3 finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort name
+python3 finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --limit 120
+
+=========================================================
+F) EXPENSES_18MO_REPORTS_STABLE — COMMANDS
+Script: expenses_18mo_reports_stable.py
+Purpose: 18-month reporting (stable baseline)
+=========================================================
+
+# Help
+python3 expenses_18mo_reports_stable.py --help
+
+# Base format
+python3 expenses_18mo_reports_stable.py expenses.csv <report>
+
+# Available reports
+# ready_to_print | quick_look_up_pdf | exec_summary | mastercat | patterns | payees | uncategorized | all
+
+# Ready-to-print (most common)
+python3 expenses_18mo_reports_stable.py expenses.csv ready_to_print
+python3 expenses_18mo_reports_stable.py expenses.csv ready_to_print --no-auto-flag
+
+# Quick lookup PDF
+python3 expenses_18mo_reports_stable.py expenses.csv quick_look_up_pdf
+
+# Executive summary
+python3 expenses_18mo_reports_stable.py expenses.csv exec_summary
+
+# Patterns only
+python3 expenses_18mo_reports_stable.py expenses.csv patterns
+
+# Payees (top N)
+python3 expenses_18mo_reports_stable.py expenses.csv payees --top-payees 10
+python3 expenses_18mo_reports_stable.py expenses.csv payees --top-payees 25
+
+# Uncategorized audit
+python3 expenses_18mo_reports_stable.py expenses.csv uncategorized
+
+# Run ALL reports
+python3 expenses_18mo_reports_stable.py expenses.csv all
+python3 expenses_18mo_reports_stable.py expenses.csv all --top-payees 10
+python3 expenses_18mo_reports_stable.py expenses.csv all --no-auto-flag
+python3 expenses_18mo_reports_stable.py expenses.csv all --top-payees 10 --no-auto-flag
+
+=========================================================
+G) LEGACY / EXPERIMENTAL (VERIFY WITH --help BEFORE USING)
+=========================================================
+
+python3 grand_finance_master.py wf_to_all --latest --outdir output/csv --summary-pdf wf_transfer_summary.pdf
+python3 grand_finance_master.py wf_clean --latest --outdir output/csv --summary-pdf wf_transfer_summary.pdf
+python3 grand_finance_master.py wf_audit --latest --outdir output/csv
+
+# finance_master legacy command name (older builds may use this instead of organized_pdf)
+python3 finance_master.py organized
+
+python3 expenses_18mo_reports_v6.py expenses.csv ready_to_print
+python3 expenses_18mo_reports_v6.py expenses.csv ready_to_print --no-auto-flag
+python3 expenses_18mo_reports_v6.py expenses.csv exec_summary
+python3 expenses_18mo_reports_v6.py expenses.csv mastercat
+python3 expenses_18mo_reports_v6.py expenses.csv patterns
+python3 expenses_18mo_reports_v6.py expenses.csv payees
+python3 expenses_18mo_reports_v6.py expenses.csv uncategorized
+python3 expenses_18mo_reports_v6.py expenses.csv all
+
+=========================================================
+END OF FILE — CLI_REFERENCE.txt
+=========================================================
+
+
+=========================================================
+F) APPENDIX — EXTRA COMMANDS (FROM running_coomands_ready_to_go.txt)
+Note: These were present in your support file but not yet listed above.
+=========================================================
+
+
+# grand_finance_master.py
+
+python3 grand_finance_master.py --in clean.csv exec_txns_desc
+
+python3 grand_finance_master.py --in clean.csv pipeline
+
+python3 grand_finance_master.py --in clean.csv quick_pdf
+
+python3 grand_finance_master.py --in clean.csv quick_pdf_18mo
+
+python3 grand_finance_master.py --in clean.csv ready_to_print
+
+python3 grand_finance_master.py --in expenses.csv all
+
+python3 grand_finance_master.py --in expenses.csv excel_families
+
+python3 grand_finance_master.py --in expenses.csv exec_txns_desc
+
+python3 grand_finance_master.py --in expenses.csv organized_pdf
+
+python3 grand_finance_master.py --in expenses.csv ready_to_print
+
+python3 grand_finance_master.py --in expenses_raw.csv spacing --out expenses_raw_spacing_fixed.csv
+
+python3 grand_finance_master.py --in output/csv/clean.csv all
+
+python3 grand_finance_master.py --in output/csv/expenses_raw.csv spacing
+
+python3 grand_finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv all
+
+python3 grand_finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv organized_pdf
+
+python3 grand_finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv pipeline
+
+python3 grand_finance_master.py --in output/csv/expenses_raw_spacing_fixed.csv ready_to_print
+
+python3 grand_finance_master.py all --help
+
+python3 grand_finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv
+
+python3 grand_finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --limit 120
+
+python3 grand_finance_master.py compare_quick_pdf \
+  --in12 expenses12m.csv \
+  --in18 expenses18m.csv \
+  --organized
+
+python3 grand_finance_master.py compare_quick_pdf \
+  --in12 expenses12m.csv \
+  --in18 expenses18m.csv \
+  --out expenses_quick_summary_comparison.pdf
+
+python3 grand_finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort delta
+
+python3 grand_finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort delta_abs
+
+python3 grand_finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort name
+
+python3 grand_finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort total12
+
+python3 grand_finance_master.py compare_quick_pdf --in12 expenses12m.csv --in18 expenses18m.csv --sort total18
+
+python3 grand_finance_master.py excel_families --out families_sorted.xlsx
+
+python3 grand_finance_master.py excel_families --sort total
+
+python3 grand_finance_master.py excel_families --sort txns
+
+python3 grand_finance_master.py excel_families --zelle-block first
+
+python3 grand_finance_master.py excel_families --zelle-block last
+
+python3 grand_finance_master.py excel_families --zelle-block none
+
+python3 grand_finance_master.py exec_txns_desc --out executive_high_to_low_txns.pdf
+
+python3 grand_finance_master.py organized_pdf --out organized_report.pdf
+
+python3 grand_finance_master.py organized_pdf --top-total 25
+
+python3 grand_finance_master.py organized_pdf --top-total 40
+
+python3 grand_finance_master.py pdf_families --out families_sorted.pdf
+
+python3 grand_finance_master.py pdf_families --sort total
+
+python3 grand_finance_master.py pdf_families --sort txns
+
+python3 grand_finance_master.py pdf_families --zelle-block first
+
+python3 grand_finance_master.py pdf_families --zelle-block last
+
+python3 grand_finance_master.py pdf_families --zelle-block none
+
+python3 grand_finance_master.py pipeline --excel-detail-out detail.xlsx
+
+python3 grand_finance_master.py pipeline --excel-summary-out summary.xlsx
+
+python3 grand_finance_master.py pipeline --help
+
+python3 grand_finance_master.py pipeline --pdf-detail-out detail.pdf
+
+python3 grand_finance_master.py pipeline --pdf-summary-out summary.pdf
+
+python3 grand_finance_master.py pipeline --summary-sort total
+
+python3 grand_finance_master.py pipeline --summary-sort txns
+
+python3 grand_finance_master.py quick --help
+
+python3 grand_finance_master.py quick --limit 50
+
+python3 grand_finance_master.py quick --organized
+
+python3 grand_finance_master.py quick --sort total
+
+python3 grand_finance_master.py quick --sort txns
+
+python3 grand_finance_master.py quick_pdf --out expenses_quick_summary.pdf
+
+python3 grand_finance_master.py quick_pdf --sort total --limit 60
+
+python3 grand_finance_master.py quick_pdf_18mo --out expenses_18mo_bucketed.pdf
+
+python3 grand_finance_master.py ready_to_print --top-other 0   # priority-only
+
+python3 grand_finance_master.py ready_to_print --top-other 25
+
+python3 grand_finance_master.py ready_to_print --top-other 40
+
+python3 grand_finance_master.py spacing --help
+
+python3 grand_finance_master.py spacing --out expenses_raw_spacing_fixed.csv
+
+python3 grand_finance_master.py wf_to_all expenses.csv --outdir output/csv --summary-pdf wf_transfer_summary.pdf

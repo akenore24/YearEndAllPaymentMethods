@@ -1,0 +1,243 @@
+TodoList.txt
+Last consolidated: JAN 16, 2026
+
+======================================================
+SECTION 1 — DATA CLEANING & INTERNAL TRANSFERS
+======================================================
+
+- Remove ALL internal transfers from CSV files (non-expense items):
+  • ONLINE TRANSFER TO KENORE A WAY2SAVE SAVINGS
+  • ONLINE TRANSFER REF #.... TO WELLS FARGO ACTIVE CASH VISA CARD
+  • ONLINE TRANSFER REF #.... TO WELLS FARGO REFLECT VISA CARD
+
+Examples to catch:
+ONLINE TRANSFER REF #IB0RQ9JWGY TO WELLS FARGO ACTIVE CASH VISA CARD XXXXXXXXXXXX0273
+ONLINE TRANSFER REF #IB0RNCWWVB TO WELLS FARGO ACTIVE CASH VISA CARD XXXXXXXXXXXX4178
+ONLINE TRANSFER REF #IB0W2BXLBC TO WELLS FARGO REFLECT VISA CARD XXXXXXXXXXXX8720
+
+- These are NOT expenses (checking → savings / credit cards)
+- They should be removed from all expense CSVs
+
+------------------------------------------------------
+
+- Create a clean, well-named Python script to handle this logic:
+  • Expand internal transfer detection
+  • Remove Way2Save + Visa internal payments
+  • Write clean + removed reports
+  • Dry-run support
+
+  (Rename file to something descriptive, e.g.:
+   internal_transfer_cleaner.py or wf_internal_transfer_cleaner.py)
+
+======================================================
+SECTION 2 — EXPENSES_18MO_REPORTS_STABLE.py (DATA QUALITY)
+======================================================
+
+- Improve categorization rules:
+  • Move "City of Aurora" → CABLE / UTILITIES / PHONE
+  • Map ZELLE → ATM / CASH
+
+- Improve 18-month CSV grouping:
+  • Better master category accuracy
+  • Reduce mis-buckets
+  • Review uncategorized output regularly
+
+- General cleanup:
+  • Remove duplicates anywhere they exist (CSV, reports, outputs)
+
+======================================================
+SECTION 3 — CLI FLEXIBILITY & INPUT HANDLING
+======================================================
+
+- Modify source code so users can pass ANY CSV filename:
+  • input.csv
+  • raw.csv
+  • expenses.csv
+  • dummy.csv
+  (No hard-coded filenames anywhere)
+
+======================================================
+SECTION 4 — GRAND_FINANCE_MASTER.py (QUALITY-OF-LIFE UPGRADES)
+======================================================
+
+Goal: Keep the tool “one command → everything”, clean and predictable.
+
+1) Add `wf_to_all --keep-only-clean`
+   - After success, keep ONLY:
+     • output/csv/clean.csv
+     • (optional) wf_transfer_summary.pdf
+   - Delete:
+     • clean_spacing.csv
+     • transfers_report.csv
+     • other WF temp artifacts
+
+   Example:
+   python3 grand_finance_master.py wf_to_all expenses.csv \
+     --outdir output/csv \
+     --keep-only-clean
+
+------------------------------------------------------
+
+2) Logging system
+   - Auto-write logs to:
+     output/logs/run_YYYY-MM-DD_HHMMSS.log
+     or output/logs/latest.log
+
+   Log should include:
+   • command used
+   • input file
+   • rows kept / removed
+   • outputs created
+   • errors
+
+   Options:
+   --log output/logs/latest.log
+   --log-dir output/logs
+
+------------------------------------------------------
+
+3) Smart open everywhere
+   - Extend smart:
+     --open
+     --open-xlsx
+   - Support both:
+     wf_to_all
+     all
+
+------------------------------------------------------
+
+4) Improve `wf_to_all --latest` transparency
+   - Print:
+     • file name
+     • full path
+     • modified time
+   - Prevent confusion about selected CSV
+
+------------------------------------------------------
+
+5) Improve `--dry-run`
+   - Even in dry-run, show:
+     • what WOULD be written
+     • what WOULD be deleted
+     • what WOULD be opened
+
+------------------------------------------------------
+
+6) Add `--run-name` or `--outbase`
+   - Avoid overwriting outputs
+   - Allow side-by-side comparisons
+
+   Example:
+   --run-name jan13_run1
+
+------------------------------------------------------
+
+7) Error-handling strategy
+   - Add:
+     • --fail-fast
+     • --continue-on-error
+
+------------------------------------------------------
+
+8) Add `wf_to_all --doctor`
+   - Environment health check:
+     • python version
+     • reportlab installed
+     • finance_core imports
+     • output dirs writable
+     • CSV structure valid
+
+======================================================
+SECTION 5 — DOCUMENTATION & VERIFICATION
+======================================================
+
+- Run and save `--help` outputs for all tools:
+  python3 wf_transfer_cleaner.py --help
+  python3 grand_finance_master.py --help
+  python3 finance_master.py --help
+  python3 expenses_18mo_reports_stable.py expenses.csv --help
+
+======================================================
+SECTION 6 — LONG-TERM ARCHITECTURE
+======================================================
+
+- Create `finance_core`:
+  • shared categorization logic
+  • shared cleaners
+  • reusable helpers
+  • scripts can run independently
+  • single source of truth
+
+======================================================
+END TodoList.txt
+======================================================
+
+JAN 17, 2026||450PM
+
+GPT Suggestion:
+    Turn Section 1 into actual code
+    Or knock out internal_transfer_cleaner.py cleanly
+    Or convert this TODO into a GitHub roadmap
+
+
+Nice — you’re at a clean foundation point, which is the best time to move forward deliberately.
+I’ll suggest only high-value next steps, in a logical order. You can pick one and we’ll go slow.
+🔥 Best Next Moves (Ranked)
+1️⃣ Lock this structure so it never gets messy again (HIGH VALUE)
+Create a tiny script that:
+checks file naming
+warns if files are dropped in the wrong folder
+prevents duplicate docs
+Example idea:
+scripts/docs_check.sh
+Run it anytime:
+./scripts/docs_check.sh
+👉 This prevents regression.
+2️⃣ Auto-generate docs from --help (VERY POWERFUL)
+You already have great CLIs.
+Next step:
+Run --help for each tool
+Capture output
+Save to:
+docs/reference/FINANCE_MASTER_HELP.txt
+docs/reference/WF_TRANSFER_CLEANER_HELP.txt
+This makes docs self-updating.
+3️⃣ Create docs/DECISIONS.md (senior-level habit)
+Short log of why choices were made:
+naming conventions
+folder structure
+separation of cleaner vs analyzer
+why UPPER_CASE docs
+This prevents second-guessing later.
+4️⃣ Stabilize interfaces (API mindset)
+Write down:
+required columns for CSV
+guaranteed outputs per command
+what is allowed to change vs locked
+This makes refactoring safe.
+5️⃣ Add a finance_core/ module (architectural maturity)
+You already hinted at this.
+Goal:
+finance_core/
+├── io.py
+├── cleaners.py
+├── reporters.py
+├── utils.py
+Then:
+wf_transfer_cleaner.py becomes thin
+grand_finance_master.py becomes orchestration only
+🟢 What I recommend you do NEXT (one step)
+If I had to choose one next step for maximum return:
+👉 Auto-generate docs from --help
+It:
+strengthens Linux skills
+removes manual documentation drift
+fits perfectly with your CLI reference work
+Your move
+Reply with one number:
+1 → lock docs structure with a script
+2 → auto-generate CLI docs from --help
+3 → create DECISIONS.md
+4 → define stable interfaces
+5 → start finance_core/ refactor
+We’ll do it clean, slow, and right.

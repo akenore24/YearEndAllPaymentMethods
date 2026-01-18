@@ -1,0 +1,293 @@
+# Jan 16, 2026 || 325PM
+
+# 📊 expenses_18mo_reports_stable.py — Future‑You Documentation
+
+> **Purpose:** This document explains *what this project does*, *why it exists*, *how to run it safely*, and *how to modify it without breaking trust*. Written for **future‑you** when memory is fuzzy but accuracy matters.
+
+---
+
+## 1️⃣ Why this script exists (the philosophy)
+
+This script was created to solve **one core problem**:
+
+> *“I need to understand my real spending over 18 months — accurately, consistently, and without re‑doing work.”*
+
+Key principles behind this project:
+
+* **Stability over features**
+* **Explicit categories > clever automation**
+* **One authoritative categorization source**
+* **Rollback‑friendly development**
+* **Readable outputs (PDF first)**
+
+This is *not* a toy script. It is a **financial audit tool**.
+
+---
+
+## 2️⃣ The trusted baseline (⚠️ very important)
+
+### ✅ Canonical version
+
+```
+expenses_18mo_reports_stable.py
+```
+
+This file is the **gold standard**.
+
+If a future version:
+
+* produces totals that “feel off”
+* shows duplicate vendors
+* breaks category rollups
+
+👉 **Compare against this file first.**
+
+> Rule: *Never delete or overwrite the stable file.*
+
+---
+
+## 3️⃣ Input expectations
+
+### Required CSV columns
+
+Your CSV **must** contain:
+
+* Master Category
+* Subcategory
+* Date
+* Location
+* Payee
+* Description
+* Payment Method
+* Amount
+
+### Amount rules
+
+* Expenses may be **negative or positive**
+* Script calculates:
+
+  * **NET total** (signed)
+  * **ABS total** (absolute spending)
+
+---
+
+## 4️⃣ Authoritative categorization system
+
+### 📌 This is NOT inferred automatically
+
+All categorization is driven by:
+
+> **Deduplicated, Simplified Description Patterns (Organized)**
+
+This list is **authoritative**.
+
+If something is miscategorized:
+
+1. Fix the pattern list
+2. Re‑run the script
+3. Do *not* hardcode one‑off exceptions
+
+### Roll‑up rules
+
+Examples:
+
+* `XCEL` → **XCEL ENERGY‑PSCO XCELENERGY**
+* `DOMINO` → **DOMINO'S**
+* `WM SUPERCENTER` → **WAL‑MART**
+* `COMCAST CABLE` → **COMCAST‑XFINITY**
+
+Short forms are always normalized into **official labels**.
+
+---
+
+## 5️⃣ Folder structure (never change lightly)
+
+```
+Realfiles/
+├── expenses_18mo_reports_stable.py
+├── expenses.csv
+├── output/
+│   └── reports/
+│       ├── ready_to_print_expenses_report.pdf
+│       ├── quick_look_up_expenses_report.pdf
+│       ├── executive_summary.pdf
+│       ├── patterns_report.pdf
+│       └── uncategorized_report.pdf
+```
+
+All PDFs live under:
+
+```
+output/reports/
+```
+
+---
+
+## 6️⃣ CLI commands (safe to use)
+
+### 🖨 Ready‑to‑print full report
+
+```
+python3 expenses_18mo_reports_stable.py expenses.csv ready_to_print
+```
+
+Use when:
+
+* Reviewing finances carefully
+* Printing
+* Archiving
+
+---
+
+### ⚡ Quick look‑up PDF
+
+```
+python3 expenses_18mo_reports_stable.py expenses.csv quick_look_up_pdf
+```
+
+Features:
+
+* Smaller font (6–9pt)
+* Multiple categories per page
+* Tables only
+* No distractions
+
+Use when:
+
+* Quick reference
+* On‑screen checking
+
+---
+
+### 📈 Executive summary
+
+```
+python3 expenses_18mo_reports_stable.py expenses.csv exec_summary
+```
+
+High‑level overview:
+
+* Total NET
+* Total ABS
+* Top categories
+
+---
+
+### 🧩 Master category ranking
+
+```
+python3 expenses_18mo_reports_stable.py expenses.csv mastercat
+```
+
+Ranks categories by:
+
+* Transaction count
+* Total spend
+
+---
+
+### 🧠 Pattern audit
+
+```
+python3 expenses_18mo_reports_stable.py expenses.csv patterns
+```
+
+Shows:
+
+* Which patterns matched
+* Helps refine categorization rules
+
+---
+
+### 🚨 Uncategorized audit (important)
+
+```
+python3 expenses_18mo_reports_stable.py expenses.csv uncategorized
+```
+
+Use when:
+
+* You see warning counts
+* New vendors appear
+
+Goal:
+
+> Reduce uncategorized rows toward **zero**
+
+---
+
+### 🧪 Run everything
+
+```
+python3 expenses_18mo_reports_stable.py expenses.csv all
+```
+
+---
+
+## 7️⃣ Auto‑flagging behavior
+
+By default:
+
+* Uncategorized rows are **flagged and reported**
+
+Optional:
+
+```
+--no-auto-flag
+```
+
+Only use this if:
+
+* You are debugging
+* You understand the risk
+
+---
+
+## 8️⃣ When NOT to change the code
+
+Do **not** change code when:
+
+* Totals are correct
+* Categories are clean
+* Output matches expectations
+
+If something feels off:
+
+1. Re‑run using stable file
+2. Compare PDFs
+3. Check pattern list
+
+---
+
+## 9️⃣ Safe ways to extend (future work)
+
+Allowed:
+
+* Add new **patterns**
+* Add new **PDF layouts**
+* Add new **summary views**
+
+Be careful with:
+
+* Core grouping logic
+* Amount math
+* Category normalization
+
+Golden rule:
+
+> *One small change → one verification run.*
+
+---
+
+## 🔒 Final note to future‑you
+
+If you’re reading this:
+
+* You already did the hard work
+* Don’t rush
+* Trust the stable baseline
+
+This system exists so you **never have to rebuild this again**.
+
+You’re doing real financial engineering. Keep it clean. Keep it DRY.
+

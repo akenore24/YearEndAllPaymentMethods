@@ -1,0 +1,178 @@
+
+WF_TRANSFER_CLEANER — CLI RUNNING GUIDE & README
+================================================
+
+Author intent:
+This tool was built to safely clean Wells Fargo CSV transaction exports by:
+• Normalizing inconsistent spacing
+• Splitting multiple transactions accidentally combined in one description
+• Removing non-expense transfers (internal savings + credit-card payments)
+• Producing clean, auditable outputs for downstream finance processing
+
+This file explains WHAT the tool does, WHY it exists, and HOW to run it correctly.
+
+------------------------------------------------
+1. WHAT THIS TOOL DOES (IN SIMPLE TERMS)
+------------------------------------------------
+
+wf_transfer_cleaner.py processes a raw Wells Fargo transaction CSV and:
+
+1) Normalizes spacing
+   - Collapses multiple spaces into one
+   - Trims leading/trailing spaces
+   - Prevents grouping bugs later
+
+2) Detects and removes NON-EXPENSE transactions:
+   A) Internal transfers
+      - Checking ⇄ Way2Save Savings
+
+   B) Credit card payments (not spending)
+      - Wells Fargo Active Cash Visa
+      - Wells Fargo Reflect Visa
+
+3) Handles bank export bugs
+   - Some rows contain TWO transactions in one description line
+   - The script splits them safely using:
+       "ON mm/dd/yy" boundaries
+
+4) Produces clear outputs
+   - clean.csv               → transactions you actually spent money on
+   - transfers_report.csv    → removed rows with a reason
+   - clean_spacing.csv       → spacing-normalized baseline (optional)
+
+------------------------------------------------
+2. FILES CREATED
+------------------------------------------------
+
+Default outputs (same folder as input CSV):
+
+• clean.csv
+  Final cleaned transactions.
+  Safe to feed into finance_master.py.
+
+• transfers_report.csv
+  All removed rows with an added column:
+    RemovalReason
+
+• clean_spacing.csv
+  Spacing-normalized copy BEFORE removal.
+  Useful for auditing or debugging.
+  Can be disabled.
+
+------------------------------------------------
+3. BASIC USAGE
+------------------------------------------------
+
+Run the script on a Wells Fargo CSV export:
+
+  python3 wf_transfer_cleaner.py your_export.csv
+
+------------------------------------------------
+4. DRY RUN MODE (IMPORTANT)
+------------------------------------------------
+
+Dry run mode analyzes the file but DOES NOT write any output files.
+
+  python3 wf_transfer_cleaner.py your_export.csv --dry-run
+
+You will see a snapshot like:
+
+  📌 Removal snapshot
+  ------------------------------------
+  Internal transfer: Way2Save Savings      41
+  Payment: WF Active Cash Visa             178
+  Payment: WF Reflect Visa                 4
+  ------------------------------------
+  TOTAL REMOVED                            223
+
+Use dry-run to verify accuracy BEFORE writing files.
+
+------------------------------------------------
+5. WHEN clean.csv IS NOT CREATED
+------------------------------------------------
+
+If you see:
+  "🧪 Dry run — no files written"
+
+That is expected behavior.
+
+To actually create clean.csv, run WITHOUT --dry-run.
+
+------------------------------------------------
+6. OPTIONAL FLAGS
+------------------------------------------------
+
+--no-name-filter
+  Use this if your bank descriptions do NOT include your last name
+  (KENORE) for Way2Save transfers.
+
+  python3 wf_transfer_cleaner.py your_export.csv --no-name-filter
+
+--no-out-spacing
+  Disable creation of clean_spacing.csv
+
+  python3 wf_transfer_cleaner.py your_export.csv --no-out-spacing
+
+------------------------------------------------
+7. HOW TRANSFERS ARE DETECTED
+------------------------------------------------
+
+The script removes rows matching patterns like:
+
+• ONLINE TRANSFER ... TO KENORE A WAY2SAVE SAVINGS ...
+• ONLINE TRANSFER REF #XXXX TO WELLS FARGO ACTIVE CASH VISA CARD ...
+• ONLINE TRANSFER REF #XXXX TO WELLS FARGO REFLECT VISA CARD ...
+
+These are NOT expenses — they are money movement or payments.
+
+------------------------------------------------
+8. SAFETY GUARANTEES
+------------------------------------------------
+
+• Original CSV is NEVER modified
+• All removals are logged to transfers_report.csv
+• Spacing cleanup happens BEFORE removal
+• Each removal includes a human-readable reason
+• Dry-run mode prevents accidental writes
+
+------------------------------------------------
+9. RECOMMENDED WORKFLOW
+------------------------------------------------
+
+1) Run dry-run
+   python3 wf_transfer_cleaner.py export.csv --dry-run
+
+2) Review snapshot counts
+
+3) Run real cleaning
+   python3 wf_transfer_cleaner.py export.csv
+
+4) Feed clean.csv into finance_master.py
+
+------------------------------------------------
+10. TROUBLESHOOTING
+------------------------------------------------
+
+If nothing is removed:
+• Try --no-name-filter
+• Check Description column name
+
+If script errors:
+• Confirm Python version:
+    python3 --version
+• Ensure CSV has headers
+• Ensure description column exists
+
+------------------------------------------------
+11. DESIGN PHILOSOPHY
+------------------------------------------------
+
+This script is intentionally:
+• Deterministic (same input → same output)
+• Auditable (nothing silently deleted)
+• Extendable (new rules = new RemovalRule)
+• Safe for automation pipelines
+
+------------------------------------------------
+END OF FILE
+------------------------------------------------

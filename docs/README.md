@@ -1,27 +1,74 @@
-# Finance Master
+# Finance Project
 
-A DRY, modular CLI tool for cleaning and reporting on financial transaction CSV exports.
+A **DRY, modular CLI system** for cleaning, validating, and reporting on financial transaction CSV exports. The project prioritizes **data correctness, auditability, and determinism** before analysis or reporting.
 
-## Install
+---
+
+## Overview
+
+This repository provides a clean, repeatable pipeline to turn raw bank exports into trusted reports.
+
+**Core components**
+- **wf_transfer_cleaner.py** — data hygiene & validation
+- **finance_master.py / grand_finance_master.py** — analysis, grouping, and reporting
+
+---
+
+## Quick Start
+
 ```bash
-pip3 install -r requirements.txt
+# Clean raw bank export
+python3 wf_transfer_cleaner.py raw_export.csv
+
+# Run full analysis pipeline
+python3 grand_finance_master.py all
 ```
 
-## Run
+---
+
+## What This Solves
+
+- Prevents counting **internal transfers** as expenses
+- Avoids **double-counting** credit card payments
+- Ensures analysis is run only on **trusted data**
+- Produces **audit-friendly** CSV, Excel, and PDF outputs
+
+---
+
+## CLI Usage (Summary)
+
 ```bash
-python3 finance_master.py --help
-python3 finance_master.py all
+python3 grand_finance_master.py --help
+python3 grand_finance_master.py all
 ```
 
-Outputs:
-- `output/csv/` (spacing-fixed CSV)
-- `output/xlsx/` (Excel reports)
-- `output/pdf/` (PDF reports)
+Common commands:
+- spacing
+- pipeline
+- ready_to_print
+- quick_pdf_18mo
+- exec_txns_desc
+- all
 
-## Common commands
-- `spacing` → creates `output/csv/expenses_raw_spacing_fixed.csv`
-- `pipeline` → creates Excel + PDF detail/summary
-- `ready_to_print` → creates `ready_to_print.xlsx` + `ready_to_print.pdf`
-- `quick_pdf_18mo` → creates the 18-month bucket executive PDF
-- `exec_txns_desc` → highest-to-lowest transaction count PDF
-- `all` → runs everything
+(See `CLI_REFERENCE.txt` for the complete command list.)
+
+---
+
+## Contributing (Short)
+
+- Keep logic **simple and DRY**
+- Do not break existing reports
+- Never commit real financial data
+
+For architecture details and design decisions, see **ARCHITECTURE.md**.
+
+---
+
+## Status & Versioning
+
+- Architecture stabilized: **v1.0**
+- Breaking changes require explicit version bumps
+
+---
+
+_End of README.md_

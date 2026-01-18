@@ -1,17 +1,12 @@
-# Jan 10, 2026
+# Finance Project — Architecture
 
-# Finance Pipeline — Architecture Overview
+_Last updated: Jan 16, 2026_
+
+---
 
 ## Purpose
 
-This document describes the **architecture, design decisions, and data flow**
-behind the finance pipeline composed of:
-
-- **wf_transfer_cleaner.py** — data hygiene & validation
-- **finance_master.py** — analysis, grouping, and reporting
-
-The goal of this system is **correctness first**: ensuring that financial reports
-are based on clean, trusted data before any analysis occurs.
+This document describes the **architecture, design principles, and data flow** of the Finance Project. It explains *why* the system is structured the way it is.
 
 ---
 
@@ -28,151 +23,110 @@ are based on clean, trusted data before any analysis occurs.
         ↓
 [ Clean, Trusted Dataset (clean.csv) ]
         ↓
-[ Analysis / Reports / PDFs (finance_master.py) ]
+[ Analysis / Reports / PDFs ]
 ```
-
-Most personal finance tools skip the middle layers.
-This pipeline intentionally does not.
 
 ---
 
 ## Core Design Principles
 
-- **Separation of Concerns**
+### Separation of Concerns
+- Cleaning ≠ Analysis
+- Validation always happens before reporting
 
-  - Cleaning ≠ Analysis
-  - wf_transfer_cleaner.py fixes data correctness
-  - finance_master.py consumes already-clean data
+### Auditability
+- Nothing is silently deleted
+- Every removal is logged
 
-- **Auditability**
+### Determinism
+- Same input → same output
+- No hidden state
 
-  - Nothing is silently deleted
-  - Every removal has a reason
-  - Human-readable reports exist at each critical stage
-
-- **Determinism**
-
-  - Same input → same output
-  - No hidden state or side effects
-
-- **Extensibility**
-  - New rules can be added without breaking existing behavior
+### Extensibility
+- New rules can be added safely
+- Core logic remains stable
 
 ---
 
-## Component 1 — wf_transfer_cleaner.py
+## Component: wf_transfer_cleaner.py
 
 ### Responsibility
+Prepare raw bank CSVs so they are **safe for analysis**.
 
-Prepare a raw bank CSV so it is **safe for financial analysis**.
-
-### Processing Order (Intentional)
-
-1. **Normalize Inconsistent Spacing**
-
-   - Collapse multiple spaces
-   - Trim whitespace
-   - Applied across all text fields
-
-2. **Split Malformed Rows**
-
-   - Handles cases where multiple transactions are combined
-   - Uses `ON mm/dd/yy` boundaries to separate logical transactions
-
-3. **Remove Non-Expense Transactions**
-
-   - Internal transfers (Checking ⇄ Savings / Way2Save)
-   - Credit card payments:
-     - Wells Fargo Active Cash Visa
-     - Wells Fargo Reflect Visa
-
-4. **Log Everything**
-
-   - Removed rows written to `transfers_report.csv`
-   - Each row includes a human-readable `RemovalReason`
-
-5. **Produce Trusted Output**
-   - `clean.csv` becomes the single source of truth
-   - Optional `clean_spacing.csv` provides a pre-removal baseline
+### Processing Order
+1. Normalize inconsistent spacing
+2. Split malformed rows ("ON mm/dd/yy")
+3. Remove non-expense transactions
+   - Internal transfers
+   - WF Active Cash Visa payments
+   - WF Reflect Visa payments
+4. Log all removals with reasons
+5. Produce trusted outputs
 
 ### Outputs
 
-| File                   | Purpose                                |
-| ---------------------- | -------------------------------------- |
-| `clean.csv`            | Final trusted dataset                  |
-| `transfers_report.csv` | Audit log of removed rows              |
-| `clean_spacing.csv`    | Spacing-normalized baseline (optional) |
-| `*.pdf`                | Executive summary (optional)           |
+| File | Purpose |
+|---|---|
+| clean.csv | Final trusted dataset |
+| transfers_report.csv | Audit log of removed rows |
+| clean_spacing.csv | Spacing-normalized baseline (optional) |
+| *.pdf | Optional summary PDF |
 
 ---
 
-## Component 2 — finance_master.py
+## Component: finance_master.py / grand_finance_master.py
 
 ### Responsibility
-
 Analyze and report on **already-clean financial data**.
 
-### Key Behaviors
-
-- Groups transactions by normalized merchants
-- Produces:
-  - Console summaries
-  - Excel reports
-  - PDF summaries
-- Supports a **pipeline mode** that runs all reports consistently
+### Capabilities
+- Merchant normalization & grouping
+- Console summaries
+- Excel reports
+- PDF summaries
+- One-command pipeline execution
 
 ### Input Strategy
-
 - Accepts any CSV path
-- Automatically uses `clean.csv` when present
+- Uses `clean.csv` automatically when present
 - Never re-cleans data (by design)
-
-This ensures analysis remains deterministic and repeatable.
 
 ---
 
 ## Integration Strategy
 
-The two scripts form a **linear pipeline**:
+Linear pipeline:
 
 ```
-wf_transfer_cleaner.py  →  clean.csv  →  finance_master.py
+wf_transfer_cleaner.py → clean.csv → finance_master.py
 ```
 
-Example workflow:
-
+Example:
 ```bash
 python3 wf_transfer_cleaner.py raw_export.csv
 python3 finance_master.py pipeline
 ```
 
-No renaming required.
-No manual cleanup steps.
-
 ---
 
 ## Audit & Trust Model
 
-This system is designed so you can answer:
+You can always answer:
+- What was removed?
+- Why was it removed?
+- How many rows were affected?
 
-- _What was removed?_
-- _Why was it removed?_
-- _How many rows were affected?_
-- _What impact did this have on totals?_
-
-Artifacts that support this:
-
-- `transfers_report.csv`
-- Snapshot counts in CLI output
-- Ready-to-print PDF summaries
+Supporting artifacts:
+- transfers_report.csv
+- CLI summaries
+- Ready-to-print PDFs
 
 ---
 
-## Common Pitfalls This Architecture Avoids
+## Common Pitfalls Avoided
 
 - ❌ Counting internal transfers as expenses
 - ❌ Double-counting credit card payments
-- ❌ Grouping errors caused by spacing
 - ❌ Silent data mutation
 - ❌ Analysis on malformed rows
 
@@ -188,43 +142,15 @@ Level 4: Analysis & Reporting
 Level 5: Automation & Optimization
 ```
 
-Most users jump from Level 1 → Level 4.
-This pipeline deliberately does not.
-
 ---
 
-## Future Enhancements (Optional)
+## Future Enhancements
 
 - Debit/Credit sign normalization
 - Merchant canonicalization
-  - `7 ELEVEN` → `7-ELEVEN`
-  - `COSTCO GAS #123` → `COSTCO GAS`
-- One-command execution:
-  ```bash
-  python3 finance_master.py pipeline --preclean raw.csv
-  ```
+- Optional pre-clean support
+- Shared `finance_core` module
 
 ---
 
-## Status Check
-
-**We’re doing very well — objectively and architecturally.**
-
-You are no longer fixing scripts.
-You are designing systems.
-
----
-
-## Versioning
-
-- Architecture stabilized: **v1.0**
-- Breaking changes require explicit version bumps
-- New rules must preserve auditability
-
----
-
-## Final Note
-
-This document exists so future you (or collaborators)
-can understand _why_ the system is structured this way,
-not just _how_ it runs.
+_End of ARCHITECTURE.md_

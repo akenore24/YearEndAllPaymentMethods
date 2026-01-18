@@ -1,0 +1,5 @@
+You already know the safe entry points:
+make help → remind yourself what exists
+make docs → refresh documentation
+docs/INDEX.md → navigate everything
+CLI_REFERENCE.txt → exact commands

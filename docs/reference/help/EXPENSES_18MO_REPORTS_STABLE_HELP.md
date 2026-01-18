@@ -1,0 +1,26 @@
+# EXPENSES_18MO_REPORTS_STABLE — CLI Help
+
+**Generated:** 2026-01-17 23:16:17  
+**Command:** `python3 expenses_18mo_reports_stable.py --help`
+
+---
+
+```text
+usage: expenses_18mo_reports_stable.py [-h] [--top-payees TOP_PAYEES]
+                                       [--no-auto-flag]
+                                       csv
+                                       {ready_to_print,quick_look_up_pdf,exec_summary,mastercat,patterns,payees,uncategorized,all}
+
+positional arguments:
+  csv                   18-month expenses CSV (expenses.csv)
+  {ready_to_print,quick_look_up_pdf,exec_summary,mastercat,patterns,payees,uncategorized,all}
+                        Which report to generate
+
+options:
+  -h, --help            show this help message and exit
+  --top-payees TOP_PAYEES
+                        Top N payees per master category
+  --no-auto-flag        Disable auto-run of uncategorized report after
+                        ready_to_print/all
+```
+
